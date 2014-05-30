@@ -1,4 +1,6 @@
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.*;
 
 import java.awt.event.*;
 import java.io.File;
@@ -6,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jdesktop.swingx.*;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
@@ -19,6 +22,7 @@ class MyFrame extends JFrame {
     private javax.swing.JTextField forDaysOff;
     private javax.swing.JTextField forExtraWorkDays;
     private javax.swing.JButton getParamsAndStartButton;
+    private javax.swing.JButton fileChooserButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -26,7 +30,7 @@ class MyFrame extends JFrame {
     private javax.swing.JPanel jPanel1;
     private org.jdesktop.swingx.JXMonthView jXMonthView1;
     private javax.swing.JComboBox monthChooser;
-    private javax.swing.JTextField pathTOYearPlan;
+    private String pathTOYearPlan="";
 	
 	MyFrame()
 	{
@@ -39,7 +43,7 @@ class MyFrame extends JFrame {
 	   private void initComponents() {
 
 	        jPanel1 = new javax.swing.JPanel();
-	        pathTOYearPlan = new javax.swing.JTextField();
+	        //pathTOYearPlan = new javax.swing.JTextField();
 	        forDaysOff = new javax.swing.JTextField();
 	        forExtraWorkDays = new javax.swing.JTextField();
 	        monthChooser = new javax.swing.JComboBox();
@@ -48,12 +52,14 @@ class MyFrame extends JFrame {
 	        jLabel3 = new javax.swing.JLabel();
 	        jLabel4 = new javax.swing.JLabel();
 	        jXMonthView1 = new org.jdesktop.swingx.JXMonthView();
+	        fileChooserButton = new JButton();
 	        delCreatedButton = new javax.swing.JButton();
 	        getParamsAndStartButton = new javax.swing.JButton();
 
+
 	        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-	        pathTOYearPlan.setText("YP2014_2.ods");
+	       // pathTOYearPlan.setText("YP2014_2.ods");
 	        
 			String[] rusMonthes={"Январь", "Февраль", "Март", "Апрель", "Май",
 									"Июнь", "Июль", "Август", "Сентябрь", "Октябрь",
@@ -79,8 +85,15 @@ class MyFrame extends JFrame {
 			jXMonthView1.setFirstDisplayedDay(firstDay);
 			jXMonthView1.setFirstDayOfWeek(2);
 	        
+			fileChooserButton.setText("Найти");
+			fileChooserButton.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					fileChooserButtonAction();
+				}
+			});
 	        
 	        delCreatedButton.setText("Delete All");
+	        delCreatedButton.setEnabled(false); //until fileChooser wasn't activated
 	        delCreatedButton.addActionListener(new ActionListener(){
 	        	public void actionPerformed(ActionEvent e){
 	        		delCreatedButtonAction();
@@ -88,6 +101,7 @@ class MyFrame extends JFrame {
 	        });
 
 	        getParamsAndStartButton.setText("OK");
+	        getParamsAndStartButton.setEnabled(false); //until fileChooser wasn't activated
 	        getParamsAndStartButton.addActionListener(new ActionListener(){
 	        	public void actionPerformed(ActionEvent e){
 	        		getParamsAndStartButtonAction();
@@ -106,9 +120,9 @@ class MyFrame extends JFrame {
 	                        .addComponent(jLabel2)
 	                        .addGap(0, 0, Short.MAX_VALUE)))
 	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-	                    .addComponent(monthChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-	                    .addComponent(pathTOYearPlan, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+	                    .addComponent(monthChooser, 0, 120, Short.MAX_VALUE)
+	                    .addComponent(fileChooserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	                .addGap(44, 44, 44))
 	            .addGroup(jPanel1Layout.createSequentialGroup()
 	                .addContainerGap()
@@ -134,9 +148,9 @@ class MyFrame extends JFrame {
 	            .addGroup(jPanel1Layout.createSequentialGroup()
 	                .addContainerGap()
 	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-	                    .addComponent(pathTOYearPlan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-	                    .addComponent(jLabel1))
-	                .addGap(11, 11, 11)
+	                    .addComponent(jLabel1)
+	                    .addComponent(fileChooserButton))
+	                .addGap(10, 10, 10)
 	                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 	                    .addComponent(monthChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 	                    .addComponent(jLabel2))
@@ -184,7 +198,7 @@ class MyFrame extends JFrame {
 		   File theFile=null;
 		   SpreadSheet toClean=null;
 			try {
-				 theFile=new File(pathTOYearPlan.getText());
+				 theFile=new File(pathTOYearPlan);
 				 toClean = SpreadSheet.createFromFile(theFile);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -210,7 +224,37 @@ class MyFrame extends JFrame {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+
+	   }//delCreatedButtonAction
+	   
+	   
+	   
+	   private void fileChooserButtonAction()
+	   {
+		    JFileChooser chooser = new JFileChooser();
+		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		    		"OpenOffice Spreadsheets", "ods");
+		    chooser.setFileFilter(filter);
+		    int returnVal = chooser.showOpenDialog(getParent());
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		       this.pathTOYearPlan=chooser.getSelectedFile().getAbsolutePath();	    
+				if(this.pathTOYearPlan.length()>20)
+				{
+					String t = "..."+this.pathTOYearPlan.substring(this.pathTOYearPlan.length()-20,
+																this.pathTOYearPlan.length());
+					this.jLabel1.setText(t);
+				}
+				else
+				{
+					this.jLabel1.setText(this.pathTOYearPlan);
+				}
+				delCreatedButton.setEnabled(true);
+				getParamsAndStartButton.setEnabled(true);
+	   	    }//if(returnVal)
 	   }
+	   
+	   
+	   
 	   
 	   private void getParamsAndStartButtonAction()
 	   {
@@ -219,11 +263,11 @@ class MyFrame extends JFrame {
 			int monthPlanFor=monthChooser.getSelectedIndex()+1;
 			int[] daysOff=parseIntArray(forDaysOff.getText());
 			int[] extraWorkDays = parseIntArray(forExtraWorkDays.getText());
-			String pathToYearPlan=pathTOYearPlan.getText();
+			String path=pathTOYearPlan;
 			//---------------------------------------
 			MonthParameters theMonthParmeters = new MonthParameters(monthPlanFor, daysOff, extraWorkDays);		
 			
-			YearPlan yPlan = new YearPlan(pathToYearPlan);				
+			YearPlan yPlan = new YearPlan(path);				
 			new MonthPlan(yPlan, theMonthParmeters);
 	   
 	   }
