@@ -1,13 +1,13 @@
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.*;
 
+import java.awt.Color;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jdesktop.swingx.*;
@@ -237,19 +237,30 @@ class MyFrame extends JFrame {
 		    chooser.setFileFilter(filter);
 		    int returnVal = chooser.showOpenDialog(getParent());
 		    if(returnVal == JFileChooser.APPROVE_OPTION) {
-		       this.pathTOYearPlan=chooser.getSelectedFile().getAbsolutePath();	    
-				if(this.pathTOYearPlan.length()>20)
-				{
-					String t = "..."+this.pathTOYearPlan.substring(this.pathTOYearPlan.length()-20,
-																this.pathTOYearPlan.length());
-					this.jLabel1.setText(t);
-				}
-				else
-				{
-					this.jLabel1.setText(this.pathTOYearPlan);
-				}
-				delCreatedButton.setEnabled(true);
-				getParamsAndStartButton.setEnabled(true);
+		       this.pathTOYearPlan=chooser.getSelectedFile().getAbsolutePath();	
+		       YearPlan test = new YearPlan(this.pathTOYearPlan);
+		       if(!test.checkIfYearPlan())
+		       {
+		    	   this.jLabel1.setText("Некорректный план   ");
+		    	   this.jLabel1.setForeground(Color.RED);
+		       }
+		       else
+		       {
+		       
+					if(this.pathTOYearPlan.length()>20)
+					{
+						String t = "..."+this.pathTOYearPlan.substring(this.pathTOYearPlan.length()-20,
+																	this.pathTOYearPlan.length());
+						this.jLabel1.setText(t);
+					}
+					else
+					{
+						this.jLabel1.setText(this.pathTOYearPlan);
+					}
+					this.jLabel1.setForeground(Color.BLACK);
+					delCreatedButton.setEnabled(true);
+					getParamsAndStartButton.setEnabled(true);
+		       }
 	   	    }//if(returnVal)
 	   }
 	   

@@ -45,17 +45,14 @@ public class YearPlan {
 		if(this.checkIfYearPlan())
 		{
 			System.out.println("Year plan OK");
+			this.readEquipmentNameSerials();
+			this.readWeekPlan();
 		}
 		else
 		{
 			System.out.println("Not a valid year plan");
-			System.exit(0);
+			//System.exit(0);
 		}
-		
-		
-		this.readEquipmentNameSerials();
-		this.readWeekPlan();	
-		//this.getStyles();
 	}
 	
 	
@@ -123,6 +120,36 @@ public class YearPlan {
 	{
 		return this.yearPlanFile; 
 	}*/
+	
+	
+	/**
+	 * Checks if there's a valid yearPlan on the sheet
+	 * @return if the *.ods file contains YearPlan
+	 */
+	public boolean checkIfYearPlan()
+	{
+		int rowCount=this.yearSheet.getRowCount();
+		int columnCount=this.yearSheet.getColumnCount();
+		if(rowCount>100){rowCount=100;};
+		if(columnCount>100){columnCount=100;};
+		
+		int hitCount=0;
+		for(int x=0; x<columnCount; x++)
+		{
+			for(int y=0; y<rowCount; y++)
+			{
+				String cellText = this.yearSheet.getImmutableCellAt(x, y).getTextValue().toLowerCase();
+				if(cellText.contains(this.nameOfDoc) ||
+						cellText.contains(this.nameOfEquipment)	 ||
+						cellText.contains(this.nameOfWeekPlan))
+				{
+					hitCount++;
+				}
+			}
+		}
+		
+		return hitCount==3?true:false;
+	}
 	
 	/**
 	 * 
@@ -232,33 +259,5 @@ public class YearPlan {
 	}*/
 	
 	
-	/**
-	 * Checks if there's a valid yearPlan on the sheet
-	 * @return if the *.ods file contains YearPlan
-	 */
-	private boolean checkIfYearPlan()
-	{
-		int rowCount=this.yearSheet.getRowCount();
-		int columnCount=this.yearSheet.getColumnCount();
-		if(rowCount>100){rowCount=100;};
-		if(columnCount>100){columnCount=100;};
-		
-		int hitCount=0;
-		for(int x=0; x<columnCount; x++)
-		{
-			for(int y=0; y<rowCount; y++)
-			{
-				String cellText = this.yearSheet.getImmutableCellAt(x, y).getTextValue().toLowerCase();
-				if(cellText.contains(this.nameOfDoc) ||
-				    cellText.contains(this.nameOfEquipment)	 ||
-					cellText.contains(this.nameOfWeekPlan))
-				{
-					hitCount++;
-				}
-			}
-		}
-	
-		return hitCount==3?true:false;
-	}
 
 }//class
