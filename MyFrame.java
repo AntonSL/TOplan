@@ -31,6 +31,7 @@ class MyFrame extends JFrame {
     private org.jdesktop.swingx.JXMonthView jXMonthView1;
     private javax.swing.JComboBox monthChooser;
     private String pathTOYearPlan="";
+    private int year=2000-1900;
 	
 	MyFrame()
 	{
@@ -81,7 +82,7 @@ class MyFrame extends JFrame {
 	        jLabel4.setText("Доп. рабочие дни");
 
 	        jXMonthView1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-		    Date firstDay=new Date (112, 0, 1);
+		    Date firstDay=new Date (this.year, 0, 1);
 			jXMonthView1.setFirstDisplayedDay(firstDay);
 			jXMonthView1.setFirstDayOfWeek(2);
 	        
@@ -260,6 +261,7 @@ class MyFrame extends JFrame {
 					this.jLabel1.setForeground(Color.BLACK);
 					delCreatedButton.setEnabled(true);
 					getParamsAndStartButton.setEnabled(true);
+					this.year=Integer.parseInt(test.getYear())-1900;
 		       }
 	   	    }//if(returnVal)
 	   }
@@ -285,7 +287,8 @@ class MyFrame extends JFrame {
 	   
 	   private void monthChooserAction()
 	   {
-		   Date toDisplay=new Date (112, monthChooser.getSelectedIndex(), 1);
+		   
+		   Date toDisplay=new Date (this.year, monthChooser.getSelectedIndex(), 1);
 		   jXMonthView1.setFirstDisplayedDay(toDisplay);
 	   }
 	   
