@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.TableModel;
+//import javax.swing.table.TableModel;
 
-import org.jdesktop.swingx.*;
-import org.jopendocument.dom.spreadsheet.Sheet;
+//import org.jdesktop.swingx.*;
+//import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 @SuppressWarnings("serial")
@@ -31,13 +31,13 @@ class MyFrame extends JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private org.jdesktop.swingx.JXMonthView jXMonthView1;
-    private javax.swing.JComboBox monthChooser;
+    private javax.swing.JComboBox<String> monthChooser;
     private String pathTOYearPlan="";
     private int year=MonthParameters.getCurrentYear()-1900; //JXMonthView needds YYYY-1900 as param
 	
 	MyFrame()
 	{
-		this.setTitle("Программа автоматического планирования ТО");
+		this.setTitle("Программа планирования ТО");
 		this.setSize(this.WIDTH, this.HEIGHT);
 		initComponents();
 	}
@@ -49,7 +49,7 @@ class MyFrame extends JFrame {
 	        //pathTOYearPlan = new javax.swing.JTextField();
 	        forDaysOff = new javax.swing.JTextField();
 	        forExtraWorkDays = new javax.swing.JTextField();
-	        monthChooser = new javax.swing.JComboBox();
+	        monthChooser = new javax.swing.JComboBox<String>();
 	        jLabel1 = new javax.swing.JLabel();
 	        jLabel2 = new javax.swing.JLabel();
 	        jLabel3 = new javax.swing.JLabel();
@@ -62,12 +62,14 @@ class MyFrame extends JFrame {
 
 	        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-	       // pathTOYearPlan.setText("YP2014_2.ods");
+	        forDaysOff.setToolTipText("<html>Введите даты праздничных и дополнительных<br> выходных дней через запятую, например:<br>1, 2, 3, 4</html>");
+	        forExtraWorkDays.setToolTipText("<html>Введите даты дополнительных<br> рабочих суббот через запятую,<br> например: 1, 7, 14, 21</html>");
 	        
 			String[] rusMonthes={"Январь", "Февраль", "Март", "Апрель", "Май",
 									"Июнь", "Июль", "Август", "Сентябрь", "Октябрь",
 									"Ноябрь", "Декабрь"};
-	        monthChooser.setModel(new javax.swing.DefaultComboBoxModel(rusMonthes));
+	        monthChooser.setModel(new javax.swing.DefaultComboBoxModel<String>(rusMonthes));
+	        monthChooser.setToolTipText("Выберите месяц для которого нужно создать план ТО");
 	        monthChooser.setSelectedIndex(MonthParameters.getCurrentMonthNumber()-1); //starts with 0
 
 	        monthChooser.addActionListener(new ActionListener(){
@@ -91,6 +93,7 @@ class MyFrame extends JFrame {
 			jXMonthView1.setFirstDayOfWeek(2);
 	        
 			fileChooserButton.setText("Найти");
+			fileChooserButton.setToolTipText("Нажмите, чтобы выбрать файл годового плана");
 			fileChooserButton.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
 					fileChooserButtonAction();
@@ -98,6 +101,7 @@ class MyFrame extends JFrame {
 			});
 	        
 	        delCreatedButton.setText("Delete All");
+	        delCreatedButton.setToolTipText("Удалить из файла годового плана все листы кроме первого");
 	        delCreatedButton.setEnabled(false); //until fileChooser wasn't activated
 	        delCreatedButton.addActionListener(new ActionListener(){
 	        	public void actionPerformed(ActionEvent e){
@@ -106,6 +110,8 @@ class MyFrame extends JFrame {
 	        });
 
 	        getParamsAndStartButton.setText("OK");
+	        getParamsAndStartButton.setToolTipText("<html>Создать план на месяц,"
+	        		+ " план будет добавлен<br> дополнительным листом в файл годового плана</html>");
 	        getParamsAndStartButton.setEnabled(false); //until fileChooser wasn't activated
 	        getParamsAndStartButton.addActionListener(new ActionListener(){
 	        	public void actionPerformed(ActionEvent e){
@@ -200,6 +206,7 @@ class MyFrame extends JFrame {
 	   
 	   private void delCreatedButtonAction()
 	   {
+		   this.delCreatedButton.setEnabled(false);
 		   File theFile=null;
 		   SpreadSheet toClean=null;
 			try {
@@ -286,13 +293,15 @@ class MyFrame extends JFrame {
 			
 			YearPlan yPlan = new YearPlan(path);				
 			new MonthPlan(yPlan, theMonthParmeters);
+			
+			this.delCreatedButton.setEnabled(true);
 	   
 	   }
 	   
 	   private void monthChooserAction()
 	   {
 		   
-		   Date toDisplay=new Date (this.year, monthChooser.getSelectedIndex(), 1);
+		   Date toDisplay=new Date (this.year, this.monthChooser.getSelectedIndex(), 1);
 		   jXMonthView1.setFirstDisplayedDay(toDisplay);
 	   }
 	   

@@ -65,11 +65,11 @@ public class YearPlan {
 	{
 		//month = 1;
 		String[] monthName = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
-		int tableXY[]=this.searchCellByText(monthName[month-1], true);
+		Pair coordinates=this.searchCellByText(monthName[month-1], true);
 		//System.out.println(monthName[month-1]+" "+Arrays.toString(tableXY));
 		
-		int column = tableXY[0];
-		int row = tableXY[1]+1; //start after the header;
+		int column = coordinates.getX();
+		int row = coordinates.getY()+1; //start after the header;
 		ArrayList<String> toReturn = new ArrayList<String>();
 		for(int i=0; i<this.equipmentList.size(); i++)
 		{
@@ -99,8 +99,8 @@ public class YearPlan {
 	
 	public String getYear()
 	{
-		int[] XY = this.searchCellByText("График", false);
-		String header = this.yearSheet.getImmutableCellAt(XY[0], XY[1]).getTextValue();
+		Pair coordinates = this.searchCellByText("График", false);
+		String header = this.yearSheet.getImmutableCellAt(coordinates.getX(), coordinates.getY()).getTextValue();
 		String year = header.substring(header.indexOf("год")-5, header.indexOf("год")-1);
 		return year;
 	}
@@ -157,10 +157,10 @@ public class YearPlan {
 	 */
 	private void readEquipmentNameSerials()
 	{		
-		int[] tableXY = this.searchCellByText(this.nameOfEquipment, false);					
+		Pair coordinates = this.searchCellByText(this.nameOfEquipment, false);					
 		
-		int column = tableXY[0];
-		int row = tableXY[1]+1; //start after the header;
+		int column = coordinates.getX();
+		int row = coordinates.getY()+1; //start after the header;
 		
 		if(this.yearSheet.getImmutableCellAt(column, row).isEmpty())
 		{
@@ -184,9 +184,9 @@ public class YearPlan {
 	{
 		//String[] weekDays = {"Mon", "Tue", "Wed", "Thu", "Fri"};
 		final int workingDays=5;
-		int[] tableXY = this.searchCellByText(this.nameOfWeekPlan, false);				
-		int column = tableXY[0];
-		int row = tableXY[1]+2; //start after the header;
+		Pair coordinates = this.searchCellByText(this.nameOfWeekPlan, false);				
+		int column = coordinates.getX();
+		int row = coordinates.getY()+2; //start after the header;
 		
 		//MyDate theMonth = new MyDate();
 		for(int i=0; i<workingDays; i++)
@@ -198,7 +198,7 @@ public class YearPlan {
 				row++;	
 			}
 			column++;
-			row=tableXY[1]+2;
+			row=coordinates.getY()+2;
 			this.weekPlanMap.put(MonthParameters.getDayOfWeekInWeek(i+1), dayTO);
 		}
 		
@@ -220,13 +220,13 @@ public class YearPlan {
 	 * @param boolean strict = true for String.equals, = false for String.contains 
 	 * @return int[]{row, column};
 	 */
-	private int[] searchCellByText(String text, boolean strict)
+	private Pair searchCellByText(String text, boolean strict)
 	{
 		int rowCount=this.yearSheet.getRowCount();
 		int columnCount=this.yearSheet.getColumnCount();	
 		if(rowCount>100){rowCount=100;};
 		if(columnCount>100){columnCount=100;};
-		int[] toReturn={-1,-1};
+		Pair toReturn=new Pair();
 			
 		for(int x=0; x<columnCount; x++)
 		{
@@ -238,8 +238,8 @@ public class YearPlan {
 				if( (cellText.equals(text.toLowerCase()) & strict)   ||					//#################### check this #######################
 				    (cellText.contains(text.toLowerCase()) & !strict)       )
 				{
-				    toReturn[0]=x;
-				    toReturn[1]=y; 
+				    toReturn.setX(x);
+				    toReturn.setY(y); 
 				}
 			}
 		}
