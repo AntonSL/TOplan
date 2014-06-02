@@ -38,6 +38,18 @@ class MonthParameters {
 		
 	}
 	
+	static int getCurrentMonthNumber()
+	{
+		DateTime aDate = new DateTime();
+		return aDate.getMonthOfYear();
+	}
+	
+	static int getCurrentYear()
+	{
+		DateTime aDate = new DateTime();
+		return aDate.getYear();
+	}
+	
 	
 	String getMonthName()
 	{

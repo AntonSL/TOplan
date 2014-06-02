@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.TableModel;
 
 import org.jdesktop.swingx.*;
+import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 @SuppressWarnings("serial")
@@ -31,7 +33,7 @@ class MyFrame extends JFrame {
     private org.jdesktop.swingx.JXMonthView jXMonthView1;
     private javax.swing.JComboBox monthChooser;
     private String pathTOYearPlan="";
-    private int year=2000-1900;
+    private int year=MonthParameters.getCurrentYear()-1900; //JXMonthView needds YYYY-1900 as param
 	
 	MyFrame()
 	{
@@ -66,6 +68,8 @@ class MyFrame extends JFrame {
 									"Июнь", "Июль", "Август", "Сентябрь", "Октябрь",
 									"Ноябрь", "Декабрь"};
 	        monthChooser.setModel(new javax.swing.DefaultComboBoxModel(rusMonthes));
+	        monthChooser.setSelectedIndex(MonthParameters.getCurrentMonthNumber()-1); //starts with 0
+
 	        monthChooser.addActionListener(new ActionListener(){
 	        	public void actionPerformed(ActionEvent e){
 	        		monthChooserAction();
@@ -82,8 +86,8 @@ class MyFrame extends JFrame {
 	        jLabel4.setText("Доп. рабочие дни");
 
 	        jXMonthView1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-		    Date firstDay=new Date (this.year, 0, 1);
-			jXMonthView1.setFirstDisplayedDay(firstDay);
+		    //Date firstDay=new Date (this.year, 0, 1);
+			//jXMonthView1.setFirstDisplayedDay(firstDay);
 			jXMonthView1.setFirstDayOfWeek(2);
 	        
 			fileChooserButton.setText("Найти");
@@ -206,7 +210,7 @@ class MyFrame extends JFrame {
 				System.out.println("No file found to clean");
 				e.printStackTrace();
 			}
-		   
+			   
 			int sheetCount=toClean.getSheetCount();
 			
 			if(sheetCount>1)
