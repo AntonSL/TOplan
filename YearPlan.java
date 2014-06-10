@@ -8,6 +8,7 @@ public class YearPlan {
 	final private String nameOfEquipment = "наименование оборудования";
 	final private String nameOfDoc = "график технического обслуживания";
 	final private String nameOfWeekPlan = "стандартный недельный план";
+	final private String legend = "обозначения";
 	
 	private String pathToYearPlan=null;
 	private SpreadSheet yearSpreadSheet=null;
@@ -17,6 +18,7 @@ public class YearPlan {
 	private ArrayList<String> equipmentList = new ArrayList<String>();
 	private ArrayList<String> serialsList = new ArrayList<String>();
 	private HashMap<String, ArrayList<String>> weekPlanMap = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, ArrayList<String>> legendMap = new HashMap<String, ArrayList<String>>();
 	//-----------------------------------------------------------------------------------------
 	//necessary cell styles--------------------------------------------------------------------
 	/*String borderedStyle = null;
@@ -47,6 +49,7 @@ public class YearPlan {
 			System.out.println("Year plan OK");
 			this.readEquipmentNameSerials();
 			this.readWeekPlan();
+			this.readLegend();
 		}
 		else
 		{
@@ -87,7 +90,7 @@ public class YearPlan {
 		return this.equipmentList;
 	}
 	
-	public ArrayList<String> getEquipmentSerialsList()
+	public ArrayList<String> getSerialsList()
 	{
 		return this.serialsList;
 	}	
@@ -95,6 +98,11 @@ public class YearPlan {
 	public HashMap<String, ArrayList<String>> getWeekPlanMap()
 	{
 		return this.weekPlanMap;
+	}
+	
+	public HashMap<String, ArrayList<String>> getLegend()
+	{
+		return this.legendMap;
 	}
 	
 	public String getYear()
@@ -212,6 +220,30 @@ public class YearPlan {
 		this.weekPlanMap.put(MonthParameters.getDayOfWeekInWeek(MonthParameters.SUNDAY), emptyDay); //Sunday is empty
 		
 	}
+	
+	
+	
+	
+	private void readLegend()
+	{
+		Pair legendStart = searchCellByText(this.legend, false);
+		int column = legendStart.getX();
+		int row = legendStart.getY()+1; //skip the name of a legend
+		ArrayList<String> TOname = new ArrayList<String>();
+		ArrayList<String> TOdesc = new ArrayList<String>();
+
+		while(!this.yearSheet.getCellAt(column, row).isEmpty())
+		{
+			TOname.add(this.yearSheet.getCellAt(column, row).getTextValue());
+			TOdesc.add(this.yearSheet.getCellAt(column+2, row).getTextValue());
+			row++;
+		}
+		
+		this.legendMap.put("name", TOname);
+		this.legendMap.put("description", TOdesc);
+	}
+	
+	
 	
 	
 	/**

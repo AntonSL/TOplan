@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
+
 import java.util.Arrays;
 
 import org.jopendocument.dom.spreadsheet.*;
@@ -59,14 +61,14 @@ public class MonthPlan {
 		//write equipment name column
 		this.monthSheet.setValueAt("Наименование оборудования", currentColumn, ++currentRow);
 		tableTitleRow=currentRow; //now I can set where the title of my table is
-		this.monthSheet.getColumn(currentColumn).setWidth(50);
+		this.monthSheet.getColumn(currentColumn).setWidth(60);
 		this.fillTableColumn(currentColumn, tableTitleRow+rowOffSet, this.yearPlanObject.getEquipmentNameList());
 		currentColumn++;
 		
 		//write serials column
 		this.monthSheet.setValueAt("Серийный номер", currentColumn, tableTitleRow);
 		this.monthSheet.getColumn(currentColumn).setWidth(35);
-		this.fillTableColumn(currentColumn, tableTitleRow+rowOffSet, this.yearPlanObject.getEquipmentSerialsList());
+		this.fillTableColumn(currentColumn, tableTitleRow+rowOffSet, this.yearPlanObject.getSerialsList());
 		currentColumn++;
 		
 		int placesForBigTOmaxCount=this.yearPlanObject.getEquipmentNameList().size();		
@@ -179,13 +181,42 @@ public class MonthPlan {
 	
 	private void writeTrailer(int currentRow)
 	{
+		currentRow+=3;	
+		
+		this.monthSheet.setValueAt("Обозначения: ", 5, currentRow);
+		currentRow++;
+		
+		ArrayList<String> smallTOname = new ArrayList<String>();
+		ArrayList<String> smallTOdesc = new ArrayList<String>();
+		smallTOname.add("ТО1");
+		smallTOdesc.add("Выполняется ежедневно");
+		smallTOname.add("ОТО");
+		smallTOdesc.add("Выполняется два раза в неделю");
+		smallTOname.add("EТО");
+		smallTOdesc.add("Выполняется ежедневно");
+		this.fillTableColumn(5, currentRow, smallTOname);
+		this.fillTableColumn(7, currentRow, smallTOdesc);
 		currentRow+=3;
+
+		ArrayList<String> legendNames=this.yearPlanObject.getLegend().get("name");
+		ArrayList<String> legendDesc=this.yearPlanObject.getLegend().get("description");
+		for(int i=currentRow; i<currentRow+legendNames.size(); i++)
+		{
+			this.monthSheet.getCellAt(5, i).setBackgroundColor(Color.orange);
+		}
+		this.fillTableColumn(5, currentRow, legendNames);
+		this.fillTableColumn(7, currentRow, legendDesc);
+		currentRow+=legendNames.size()+2;
+
+		
 		this.monthSheet.setValueAt("Ведущий инженер ", 5, currentRow);
+
+
 			
 	}
 	
 	
-	private void fillTableColumn (final int COLUMN, int startRow, ArrayList<String> filling)
+	private void fillTableColumn (final int COLUMN, int startRow, List<String> filling)
 	{
 		for(int i=0; i<filling.size(); i++)
 		{
