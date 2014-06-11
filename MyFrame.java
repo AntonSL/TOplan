@@ -1,5 +1,5 @@
 import javax.swing.*;
-//import org.jdesktop.swingx.*;
+import org.jdesktop.swingx.JXMonthView;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.Color;
@@ -14,14 +14,22 @@ import java.util.Date;
 
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
+
+/**
+ * This class is responsible for constructing user interface
+ * by means of extending JFrame class and adding all necessary 
+ * swing components to it
+ * @author Anton Lukashchuk
+ *
+ */
 @SuppressWarnings("serial")
 class MyFrame extends JFrame {
 	
 	private final int WIDTH = 500;
 	private final int HEIGHT = 400;
     private JButton delCreatedButton;
-    private JTextField forDaysOff;
-    private JTextField forExtraWorkDays;
+    private JTextField forDaysOff;//additional days off in this month
+    private JTextField forExtraWorkDays;//additional working days in his month
     private JButton getParamsAndStartButton;
     private JButton fileChooserButton;
     private JLabel jLabel1;
@@ -29,11 +37,16 @@ class MyFrame extends JFrame {
     private JLabel jLabel3;
     private JLabel jLabel4;
     private JPanel jPanel1;
-    private org.jdesktop.swingx.JXMonthView jXMonthView1;
+    private JXMonthView jXMonthView1;
     private JComboBox<String> monthChooser;
-    private String pathToYearPlan="";
-    private int year=MonthParameters.getCurrentYear()-1900; //JXMonthView needds YYYY-1900 as param
-	
+    private String pathToYearPlan="";//will be chosen by user
+    private int year=MonthParameters.getCurrentYear()-1900; //JXMonthView needs YYYY-1900 as param
+
+    
+    /**
+     * No-parameters constructor
+     * construct new MyFrame with specified title, size and close operation
+     */
 	MyFrame()
 	{
 		setTitle("Программа планирования ТО");
@@ -42,7 +55,9 @@ class MyFrame extends JFrame {
 		initComponents();
 	}
 	
-	
+	/**
+	 * Initializing all components on the frame
+	 */
     private void initComponents() 
     {
         jPanel1 = new JPanel();
@@ -119,7 +134,13 @@ class MyFrame extends JFrame {
         pack();
     }//initComponents
 
-	   	   
+	
+    /**
+     * Method called inside actionPerformed() of delCreatedButton
+     * this action deletes all sheets from Year plan file except the first one
+     * First sheet contains year plan, all other sheets contain month
+     * plan created by user 
+     */
     private void delCreatedButtonAction()
     {
 	   this.delCreatedButton.setEnabled(false);
@@ -154,7 +175,11 @@ class MyFrame extends JFrame {
 
     }//delCreatedButtonAction
 	   
-	      
+	/**
+	 *  Method called inside actionPerformed() of fileChooserButton    
+	 *  After user selects the Year plan file, this method sets
+	 *  this.pathToYearPlan field.
+	 */
    private void fileChooserButtonAction()
    {
 	    JFileChooser chooser = new JFileChooser();
@@ -190,7 +215,12 @@ class MyFrame extends JFrame {
    	    }//if(returnVal)
    }//fileChooserButtonAction()
 	   
-	      
+	
+   /**
+    * Method called inside actionPerformed() of getParamsAndStartButton
+    * this is where the magic begins:)
+    * All user inputs are read from UI and new Month plan generated 
+    */
    private void getParamsAndStartButtonAction()
    {
 	   
@@ -209,6 +239,11 @@ class MyFrame extends JFrame {
    }//getParamsAndStartButtonAction()
 	   
    
+   /**
+    * Method called inside actionPerformed() of monthChooser JComboBox.
+    * When user chooses a month from drop-down list, jXMonthView1 component
+    * changes it's view to display concrete month
+    */
    private void monthChooserAction()
    {
 	   
@@ -216,7 +251,12 @@ class MyFrame extends JFrame {
 	   jXMonthView1.setFirstDisplayedDay(toDisplay);
    }
 	   
-	   
+	/**
+	 * Parses string for int values and returns them in array
+	 * ==have to refactor it with regex later==   
+	 * @param s - string to be parsed
+	 * @return int[] with found ints
+	 */
    private int[] parseIntArray(String s)
    {
 		if(s.equals(""))
@@ -247,11 +287,8 @@ class MyFrame extends JFrame {
 		intStrings.add(s.substring(intStart, s.length()));
 		System.out.println(intStrings);
 		
-		
 		int[] toReturn=new int[intStrings.size()];
-		
-
-		
+				
 		for(int i=0; i<intStrings.size(); i++)
 		{
 			toReturn[i]=Integer.parseInt(intStrings.get(i));
@@ -261,6 +298,9 @@ class MyFrame extends JFrame {
 	}
 	   
    
+   /**
+    * GroupLayout generated in NetBeans IDE
+    */
    private void setLayout()
    {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

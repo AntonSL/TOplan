@@ -1,4 +1,8 @@
-
+/**
+ * Just a pair of ints to store cell coordinates
+ * @author troy
+ *
+ */
 class Pair {
 	
 	private int x=-1;

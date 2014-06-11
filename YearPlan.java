@@ -1,8 +1,13 @@
 import java.io.*;
 import java.util.*;
-
 import org.jopendocument.dom.spreadsheet.*;
 
+/**
+ * This class gets path to Year plan file, checks if there's a valid plan
+ * in this file and reads all data from it.
+ * @author Lukashchuk Anton
+ *
+ */
 public class YearPlan {
 
 	final private String nameOfEquipment = "наименование оборудования";
@@ -60,13 +65,12 @@ public class YearPlan {
 	
 	
 	/**
-	 * Returns column of TO for requested month
+	 * Returns column of big TO for requested month
 	 * @param month number (1-12) to get TO plan for 
 	 * @return column of TO for a concrete month
 	 */
 	public ArrayList<String> getBigTOforThisMonth(int month)
 	{
-		//month = 1;
 		String[] monthName = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
 		Pair coordinates=this.searchCellByText(monthName[month-1], true);
 		//System.out.println(monthName[month-1]+" "+Arrays.toString(tableXY));
@@ -84,27 +88,46 @@ public class YearPlan {
 	}
 	
 	
-	
+	/**
+	 * Gets the column with equipment list
+	 * @return ArrayList of names
+	 */
 	public ArrayList<String> getEquipmentNameList()
 	{
 		return this.equipmentList;
 	}
 	
+	/**
+	 * Gets serial numbers
+	 * @return ArrayList of serials stored as strings
+	 */
 	public ArrayList<String> getSerialsList()
 	{
 		return this.serialsList;
 	}	
 	
+	/**
+	 * Gets standard TO plan for a week
+	 * @return Map where key is day name, value is ArrayList of TO names
+	 */
 	public HashMap<String, ArrayList<String>> getWeekPlanMap()
 	{
 		return this.weekPlanMap;
 	}
 	
+	/**
+	 * Gets TO names with description
+	 * @return
+	 */
 	public HashMap<String, ArrayList<String>> getLegend()
 	{
 		return this.legendMap;
 	}
 	
+	/**
+	 * 
+	 * @return year specified in plan header
+	 */
 	public String getYear()
 	{
 		Pair coordinates = this.searchCellByText("График", false);
@@ -113,7 +136,10 @@ public class YearPlan {
 		return year;
 	}
 	
-	
+	/**
+	 * 
+	 * @return path to Year plan file
+	 */
 	public String getPathToFile()
 	{
 		return this.pathToYearPlan;
@@ -187,7 +213,9 @@ public class YearPlan {
 	
 	
 	
-	
+	/**
+	 * fills Map where key is day name, value is ArrayList of TO names
+	 */
 	private void readWeekPlan() //call getEquipmentList first
 	{
 		//String[] weekDays = {"Mon", "Tue", "Wed", "Thu", "Fri"};
@@ -223,7 +251,9 @@ public class YearPlan {
 	
 	
 	
-	
+	/**
+	 * Reads TO names and their description
+	 */
 	private void readLegend()
 	{
 		Pair legendStart = searchCellByText(this.legend, false);
@@ -238,6 +268,7 @@ public class YearPlan {
 			TOdesc.add(this.yearSheet.getCellAt(column+2, row).getTextValue());
 			row++;
 		}
+		
 		
 		this.legendMap.put("name", TOname);
 		this.legendMap.put("description", TOdesc);

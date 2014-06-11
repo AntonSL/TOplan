@@ -1,13 +1,18 @@
 import java.awt.Color;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.LinkedList;
 import java.util.Arrays;
 
 import org.jopendocument.dom.spreadsheet.*;
 
-
+/**
+ * This class gets Year Plan object and fills new Month Plan sheet
+ * @author Anton Lukashchuk
+ *
+ */
 public class MonthPlan {
 
 	private YearPlan yearPlanObject=null;
@@ -17,23 +22,26 @@ public class MonthPlan {
 	private SpreadSheet monthSpreadSheet=null;
 	private Sheet monthSheet=null;
 	
+	
+	/**
+	 * 
+	 * @param yearPlanObject 
+	 * @param theMonthParmeters object contains data obtained from user interface
+	 */
 	public MonthPlan(YearPlan yearPlanObject, MonthParameters theMonthParmeters)
 	{	
 		this.yearPlanObject=yearPlanObject;
 		this.theMonthParameters=theMonthParmeters;
 		this.monthFile=new File(yearPlanObject.getPathToFile());
 		
-		int size[] = new int[]{100, 100}; //must calculate plan table size later, not store as constant
-
 		try {
 			this.monthSpreadSheet=SpreadSheet.createFromFile(this.monthFile);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-			
+				
+		int size[] = new int[]{100, 100}; //must calculate plan table size later, not store as constant	
 		this.monthSheet = monthSpreadSheet.addSheet(this.theMonthParameters.getMonthName());
 		this.monthSheet.setColumnCount(size[0]);
 		this.monthSheet.setRowCount(size[1]);
@@ -46,7 +54,10 @@ public class MonthPlan {
 	
 	
 	
-	
+	/**
+	 * Fills new sheet with Month Plan data.
+	 * Plan consists of Header - TO data table - Trailer.
+	 */
 	private void fill()
 	{
 						
@@ -54,7 +65,6 @@ public class MonthPlan {
 		int currentRow=1;	 //first non-empty row
 		int tableTitleRow=0;  //will be set later after writing document header
 		final int rowOffSet=2; //offset between table title and table filling	(must be >=2)	
-		//MyDate monthInQuestion = new MyDate(this.theMonthParmeters.monthNumber);
 		
 		currentRow=this.writeHeader(theMonthParameters.getMonthName(), currentRow);
 
@@ -109,9 +119,6 @@ public class MonthPlan {
 			}
 			currentColumn++;			
 		}
-			
-		//System.out.println(Arrays.toString(placesForBigTO));
-		//return recommendedPlacesForBigTO;
 		
 		this.setBigTO(this.yearPlanObject.getBigTOforThisMonth(theMonthParameters.getMonthNumber()), recommendedPlacesForBigTO, tableTitleRow+rowOffSet);
 		currentRow=tableTitleRow+rowOffSet+this.yearPlanObject.getEquipmentNameList().size();
@@ -121,7 +128,12 @@ public class MonthPlan {
 	}
 	
 
-	
+	/**
+	 * Places big TO types read from Year Plan 
+	 * @param bigTO ArrayList with TO names
+	 * @param recommendedPlacesForBigTO array with column numbers for big TO
+	 * @param firstRow where to start placing TO
+	 */
 	private void setBigTO(ArrayList<String> bigTO, int[] recommendedPlacesForBigTO, int firstRow)
 	{
 		int[] placesForBigTO = recommendedPlacesForBigTO;
@@ -152,7 +164,12 @@ public class MonthPlan {
 	}
 	
 
-	
+	/**
+	 * Writes header of the Month plan
+	 * @param monthName
+	 * @param currentRow
+	 * @return number of Row where the header ended
+	 */
 	private int writeHeader(String monthName, int currentRow)
 	{
 		
@@ -178,7 +195,10 @@ public class MonthPlan {
 		return currentRow;
 	}
 	
-	
+	/**
+	 * Writes trailer of the Month plan
+	 * @param currentRow
+	 */
 	private void writeTrailer(int currentRow)
 	{
 		currentRow+=3;	
@@ -186,8 +206,8 @@ public class MonthPlan {
 		this.monthSheet.setValueAt("Обозначения: ", 5, currentRow);
 		currentRow++;
 		
-		ArrayList<String> smallTOname = new ArrayList<String>();
-		ArrayList<String> smallTOdesc = new ArrayList<String>();
+		List<String> smallTOname = new LinkedList<String>();
+		List<String> smallTOdesc = new LinkedList<String>();
 		smallTOname.add("ТО1");
 		smallTOdesc.add("Выполняется ежедневно");
 		smallTOname.add("ОТО");
@@ -215,7 +235,12 @@ public class MonthPlan {
 			
 	}
 	
-	
+	/**
+	 * Places "filling" in the specified COLUMN starting from startRow
+	 * @param COLUMN number of column to fill
+	 * @param startRow
+	 * @param filling List of data to be placed in COLUMN starting from startRow
+	 */
 	private void fillTableColumn (final int COLUMN, int startRow, List<String> filling)
 	{
 		for(int i=0; i<filling.size(); i++)
@@ -238,7 +263,9 @@ public class MonthPlan {
 	
 	
 	
-	
+	/**
+	 * Saves changes to *.ods file
+	 */
 	private void saveSpreadSheet()
 	{
 		try

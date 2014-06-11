@@ -1,9 +1,13 @@
 import java.util.Arrays;
 import java.util.Locale;
 import org.joda.time.DateTime;
-//import java.util.*;
 
-
+/**
+ * This class allows easy access to month parameters both
+ * obtained from user and calculated with jOdaTime lib
+ * @author Anton Lukashchuk
+ *
+ */
 class MonthParameters {
 
 	static final int MONDAY = 1;
@@ -30,7 +34,11 @@ class MonthParameters {
 		Arrays.sort(this.extraWorkDays);//in case I use binarySearch later
 	}
 	
-	
+	/**
+	 * 
+	 * @param dayInWeek number of day in week 1-7
+	 * @return short name of this day in rus locale Пн.-Пт.
+	 */
 	static String getDayOfWeekInWeek(int dayInWeek)
 	{		
 		DateTime aDate = new DateTime().withDayOfWeek(dayInWeek);
@@ -38,47 +46,77 @@ class MonthParameters {
 		
 	}
 	
+	/**
+	 * 
+	 * @return number of current month 1-12
+	 */
 	static int getCurrentMonthNumber()
 	{
 		DateTime aDate = new DateTime();
 		return aDate.getMonthOfYear();
 	}
 	
+	/**
+	 * 
+	 * @return current year
+	 */
 	static int getCurrentYear()
 	{
 		DateTime aDate = new DateTime();
 		return aDate.getYear();
 	}
 	
-	
+	/**
+	 * 
+	 * @return russian name of the month which user chose
+	 */
 	String getMonthName()
 	{
 		return rusMonthes[monthNumber-1];
 	}
 	
+	/**
+	 * 
+	 * @return number of the month which user chose 1-12
+	 */
 	int getMonthNumber()
 	{
 		return this.monthNumber;
 	}
 	
+	/**
+	 * 
+	 * @return array of day numbers to which are not working due to holidays etc.
+	 */
 	int[] getDaysOff()
 	{
 		return this.daysOff;
 	}
 	
+	/**
+	 * additional work days
+	 * @return array of additional work days numbers
+	 */
 	int[] getExtraWorkDays()
 	{
 		return this.extraWorkDays;
 	}
 	
-	
+	/**
+	 * 
+	 * @return how many days in user-chosen month
+	 */
 	int getDaysInMonth()
 	{
 		DateTime aDate = new DateTime(2014, monthNumber, 1, 1, 1);	
 		return aDate.dayOfMonth().getMaximumValue();
 	}
 	
-	
+	/**
+	 * 
+	 * @param dayInMonth 1-31
+	 * @return short name of this day in week in russian Пн.-Пт.
+	 */
 	String getDayOfWeekInMonth(int dayInMonth)
 	{
 		DateTime aDate = new DateTime(2014, this.monthNumber, dayInMonth, 1, 1);
