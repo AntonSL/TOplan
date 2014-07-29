@@ -21,7 +21,7 @@ public class MonthPlan {
 	private File monthFile=null;
 	private SpreadSheet monthSpreadSheet=null;
 	private Sheet monthSheet=null;
-	
+
 	
 	/**
 	 * 
@@ -90,7 +90,8 @@ public class MonthPlan {
 			String dayName = theMonthParameters.getDayOfWeekInMonth(i);
 			this.monthSheet.getColumn(currentColumn).setWidth(10);
 			this.monthSheet.setValueAt(dayName, currentColumn, tableTitleRow);
-			if(dayName.equals(MonthParameters.getDayOfWeekInWeek(MonthParameters.SATURDAY)) || dayName.equals(MonthParameters.getDayOfWeekInWeek(MonthParameters.SUNDAY)))
+			if(dayName.equals(DateUtils.getDayOfWeekInWeek(DateUtils.SATURDAY)) ||
+					dayName.equals(DateUtils.getDayOfWeekInWeek(DateUtils.SUNDAY)))
 			{
 				this.monthSheet.getCellAt(currentColumn, tableTitleRow).setBackgroundColor(Color.GREEN);
 				this.monthSheet.getColumn(currentColumn).setWidth(7);
@@ -103,16 +104,19 @@ public class MonthPlan {
 			}
 			else if(Arrays.binarySearch(theMonthParameters.getExtraWorkDays(), i)>=0)
 			{
-				this.fillTableColumn(currentColumn, tableTitleRow+rowOffSet, this.yearPlanObject.getWeekPlanMap().get(MonthParameters.getDayOfWeekInWeek(5)));
+				this.fillTableColumn(currentColumn, tableTitleRow+rowOffSet,
+						this.yearPlanObject.getWeekPlanMap().get(DateUtils.getDayOfWeekInWeek(5)));
 			}
 			else if(Arrays.binarySearch(theMonthParameters.getExtraWorkDays(), i+1)>=0)
 			{
-				this.fillTableColumn(currentColumn, tableTitleRow+rowOffSet, this.yearPlanObject.getWeekPlanMap().get(MonthParameters.getDayOfWeekInWeek(4)));
+				this.fillTableColumn(currentColumn, tableTitleRow+rowOffSet,
+						this.yearPlanObject.getWeekPlanMap().get(DateUtils.getDayOfWeekInWeek(4)));
 			}
 			else
 			{
 				this.fillTableColumn(currentColumn, tableTitleRow+rowOffSet, this.yearPlanObject.getWeekPlanMap().get(dayName));
-				if(placesForBigTOmaxCount>0 && !dayName.equals(MonthParameters.getDayOfWeekInWeek(6)) && !dayName.equals(MonthParameters.getDayOfWeekInWeek(7)))
+				if(placesForBigTOmaxCount>0 && !dayName.equals(DateUtils.getDayOfWeekInWeek(6)) &&
+						!dayName.equals(DateUtils.getDayOfWeekInWeek(7)))
 				{				  
 				  recommendedPlacesForBigTO[--placesForBigTOmaxCount]=currentColumn;				  
 				}  
@@ -134,7 +138,7 @@ public class MonthPlan {
 	 * @param recommendedPlacesForBigTO array with column numbers for big TO
 	 * @param firstRow where to start placing TO
 	 */
-	private void setBigTO(ArrayList<String> bigTO, int[] recommendedPlacesForBigTO, int firstRow)
+	private void setBigTO(List<String> bigTO, int[] recommendedPlacesForBigTO, int firstRow)
 	{
 		int[] placesForBigTO = recommendedPlacesForBigTO;
 		
@@ -174,6 +178,8 @@ public class MonthPlan {
 	{
 		
 		String year=this.yearPlanObject.getYear();
+		
+		this.monthSheet.getCellAt(25, currentRow).setStyleName(this.yearPlanObject.getBorderedStyle());
 
 		this.monthSheet.setValueAt("УТВЕРЖДАЮ ", 25, currentRow);
 		currentRow++;

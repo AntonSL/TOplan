@@ -6,19 +6,16 @@ import java.awt.Color;
 import java.awt.event.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 
 /**
  * This class is responsible for constructing user interface
- * by means of extending JFrame class and adding all necessary 
- * swing components to it
  * @author Anton Lukashchuk
  *
  */
@@ -40,7 +37,7 @@ class MyFrame extends JFrame {
     private JXMonthView jXMonthView1;
     private JComboBox<String> monthChooser;
     private String pathToYearPlan="";//will be chosen by user
-    private int year=MonthParameters.getCurrentYear()-1900; //JXMonthView needs YYYY-1900 as param
+    private int year=DateUtils.getCurrentYear()-1900; //JXMonthView needs YYYY-1900 as parameter
 
     
     /**
@@ -87,7 +84,7 @@ class MyFrame extends JFrame {
 								"Ноябрь", "Декабрь"};
         monthChooser.setModel(new javax.swing.DefaultComboBoxModel<String>(rusMonthes));
         monthChooser.setToolTipText("Выберите месяц для которого нужно создать план ТО");
-        monthChooser.setSelectedIndex(MonthParameters.getCurrentMonthNumber()-1); //starts with 0
+        monthChooser.setSelectedIndex(DateUtils.getCurrentMonthNumber()-1); //starts with 0
         monthChooser.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e){
         		monthChooserAction();
@@ -151,7 +148,6 @@ class MyFrame extends JFrame {
 			 spSheetToClean = SpreadSheet.createFromFile(theFile);
 		} catch (IOException e) {
 			System.out.println("No file found to clean");
-			e.printStackTrace();
 		}
 		   
 		int sheetCount=spSheetToClean.getSheetCount();
@@ -165,12 +161,8 @@ class MyFrame extends JFrame {
 		}
 		try {
 			spSheetToClean.saveAs(theFile);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("Can't save file");
 		}
 
     }//delCreatedButtonAction
@@ -252,49 +244,20 @@ class MyFrame extends JFrame {
    }
 	   
 	/**
-	 * Parses string for int values and returns them in array
-	 * ==have to refactor it with regex later==   
+	 * Parses string for int values and returns them in array 
 	 * @param s - string to be parsed
 	 * @return int[] with found ints
 	 */
    private int[] parseIntArray(String s)
    {
-		if(s.equals(""))
-		{
-			return new int[]{};
-		}
-		ArrayList<String> intStrings = new ArrayList<String>();
-		int intStart=0;
-		int intEnd=-1;
-		for(int i=0; i<s.length(); i++)
-		{
+	   StringTokenizer tokenizer = new StringTokenizer(s, ", ;-.", false);
+	   int size = tokenizer.countTokens();
+	   int[] toReturn = new int[size];
+	   for (int tokenIndex = 0; tokenIndex < size; tokenIndex++) {
+		   toReturn[tokenIndex]=Integer.parseInt(tokenizer.nextToken());
+	   }
 
-			if(!Character.isDigit(s.charAt(i)) && intStart>=0)
-			{
-				intEnd=i;
-				intStrings.add(s.substring(intStart, intEnd));
-				intStart=-1;
-			}
-			else if(intStart==-1)
-			{
-				if(Character.isDigit(s.charAt(i)))
-				{
-					intStart=i;
-				}
-			}
-					
-		}
-		intStrings.add(s.substring(intStart, s.length()));
-		System.out.println(intStrings);
-		
-		int[] toReturn=new int[intStrings.size()];
-				
-		for(int i=0; i<intStrings.size(); i++)
-		{
-			toReturn[i]=Integer.parseInt(intStrings.get(i));
-		}
-		
-		return toReturn;
+	   return toReturn;
 	}
 	   
    

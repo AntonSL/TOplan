@@ -9,8 +9,10 @@ public class MainClass {
 		EventQueue.invokeLater(new Runnable(){
 			public void run()
 			{
-				MyFrame aFrame = new MyFrame();
-				aFrame.setVisible(true);
+				//create main program frame
+				MyFrame mainFrame = new MyFrame();
+				//and display it
+				mainFrame.setVisible(true);
 			}
 		});
 		

@@ -1,5 +1,6 @@
 /**
- * Just a pair of ints to store cell coordinates
+ * Just a pair of ints to store coordinates or anything else
+ * that is represented by pair of ints
  * @author troy
  *
  */

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+
 import org.jopendocument.dom.spreadsheet.*;
 
 /**
@@ -20,16 +21,15 @@ public class YearPlan {
 	private Sheet yearSheet=null;
 	
 	//obtained year plan data -----------------------------------------------------------------
-	private ArrayList<String> equipmentList = new ArrayList<String>();
-	private ArrayList<String> serialsList = new ArrayList<String>();
-	private HashMap<String, ArrayList<String>> weekPlanMap = new HashMap<String, ArrayList<String>>();
-	private HashMap<String, ArrayList<String>> legendMap = new HashMap<String, ArrayList<String>>();
+	private List<String> equipmentList = new ArrayList<String>();
+	private List<String> serialsList = new ArrayList<String>();
+	private Map<String, ArrayList<String>> weekPlanMap = new HashMap<String, ArrayList<String>>();
+	private Map<String, ArrayList<String>> legendMap = new HashMap<String, ArrayList<String>>();
 	//-----------------------------------------------------------------------------------------
 	//necessary cell styles--------------------------------------------------------------------
-	/*String borderedStyle = null;
-	String docTitleStyle = null;*/
+	private String cellStyle = null;
+	private String headerStyle = null;
 	//-----------------------------------------------------------------------------------------
-
 	
 	/**
 	 * 
@@ -69,7 +69,7 @@ public class YearPlan {
 	 * @param month number (1-12) to get TO plan for 
 	 * @return column of TO for a concrete month
 	 */
-	public ArrayList<String> getBigTOforThisMonth(int month)
+	public List<String> getBigTOforThisMonth(int month)
 	{
 		String[] monthName = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
 		Pair coordinates=this.searchCellByText(monthName[month-1], true);
@@ -77,7 +77,7 @@ public class YearPlan {
 		
 		int column = coordinates.getX();
 		int row = coordinates.getY()+1; //start after the header;
-		ArrayList<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<String>();
 		for(int i=0; i<this.equipmentList.size(); i++)
 		{
 			toReturn.add(this.yearSheet.getImmutableCellAt(column, row).getTextValue());
@@ -92,7 +92,7 @@ public class YearPlan {
 	 * Gets the column with equipment list
 	 * @return ArrayList of names
 	 */
-	public ArrayList<String> getEquipmentNameList()
+	public List<String> getEquipmentNameList()
 	{
 		return this.equipmentList;
 	}
@@ -101,7 +101,7 @@ public class YearPlan {
 	 * Gets serial numbers
 	 * @return ArrayList of serials stored as strings
 	 */
-	public ArrayList<String> getSerialsList()
+	public List<String> getSerialsList()
 	{
 		return this.serialsList;
 	}	
@@ -110,7 +110,7 @@ public class YearPlan {
 	 * Gets standard TO plan for a week
 	 * @return Map where key is day name, value is ArrayList of TO names
 	 */
-	public HashMap<String, ArrayList<String>> getWeekPlanMap()
+	public Map<String, ArrayList<String>> getWeekPlanMap()
 	{
 		return this.weekPlanMap;
 	}
@@ -119,7 +119,7 @@ public class YearPlan {
 	 * Gets TO names with description
 	 * @return
 	 */
-	public HashMap<String, ArrayList<String>> getLegend()
+	public Map<String, ArrayList<String>> getLegend()
 	{
 		return this.legendMap;
 	}
@@ -133,6 +133,7 @@ public class YearPlan {
 		Pair coordinates = this.searchCellByText("График", false);
 		String header = this.yearSheet.getImmutableCellAt(coordinates.getX(), coordinates.getY()).getTextValue();
 		String year = header.substring(header.indexOf("год")-5, header.indexOf("год")-1);
+		//this.headerStyle=this.yearSheet.getCellAt(coordinates.getX(), coordinates.getY()).getStyleName();
 		return year;
 	}
 	
@@ -185,6 +186,16 @@ public class YearPlan {
 		return hitCount==3?true:false;
 	}
 	
+	public String getHeaderStyle()
+	{
+		return this.headerStyle;
+	}
+	
+	public String getBorderedStyle()
+	{
+		return this.cellStyle;
+	}
+	
 	/**
 	 * 
 	 * @return two ArrayList of Equipment names, and their Serials
@@ -195,6 +206,8 @@ public class YearPlan {
 		
 		int column = coordinates.getX();
 		int row = coordinates.getY()+1; //start after the header;
+		
+		this.cellStyle=this.yearSheet.getCellAt(column, row+2).getStyleName();
 		
 		if(this.yearSheet.getImmutableCellAt(column, row).isEmpty())
 		{
@@ -235,7 +248,7 @@ public class YearPlan {
 			}
 			column++;
 			row=coordinates.getY()+2;
-			this.weekPlanMap.put(MonthParameters.getDayOfWeekInWeek(i+1), dayTO);
+			this.weekPlanMap.put(DateUtils.getDayOfWeekInWeek(i+1), dayTO);
 		}
 		
 		ArrayList<String> emptyDay = new ArrayList<String>();
@@ -244,8 +257,8 @@ public class YearPlan {
 			emptyDay.add("");
 		}
 		
-		this.weekPlanMap.put(MonthParameters.getDayOfWeekInWeek(MonthParameters.SATURDAY), emptyDay); //Saturday is empty
-		this.weekPlanMap.put(MonthParameters.getDayOfWeekInWeek(MonthParameters.SUNDAY), emptyDay); //Sunday is empty
+		this.weekPlanMap.put(DateUtils.getDayOfWeekInWeek(DateUtils.SATURDAY), emptyDay); //Saturday is empty
+		this.weekPlanMap.put(DateUtils.getDayOfWeekInWeek(DateUtils.SUNDAY), emptyDay); //Sunday is empty
 		
 	}
 	
